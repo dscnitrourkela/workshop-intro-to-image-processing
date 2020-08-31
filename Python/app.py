@@ -84,6 +84,73 @@ def getColourChannels(filename):
     img.save('blue-'+filename)
     img = Image.fromarray(greenArray)
     img.save('green-'+filename)
+    return
+
+# 5x5 box blur
+def boxBlur_5x5(filename):
+    img = Image.open(filename)
+    array = np.array(img)
+    kernel=np.array([[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1],[1,1,1,1,1]])
+    print(kernel)
+    img = Image.open(filename)
+    array = np.array(img)
+    modifiedImage=np.zeros([array.shape[0],array.shape[1],3], dtype=np.uint8)
+    for i in range(2, modifiedImage.shape[0]-2):
+        for j in range(2,modifiedImage.shape[1]-2):
+            for c in range(0,3):
+                sum=0
+                for k in range(0,kernel.shape[0]):
+                    for l in range(0,kernel.shape[1]):
+                        sum=sum+kernel[k,l]*array[i-2+k,j-2+l,c]
+                modifiedImage[i,j,c]=sum/25.0
+    img = Image.fromarray(modifiedImage)
+    img.save('BoxBlurred_5x5'+filename)
+    return
+
+# 3x3 gaussian box blur
+def gaussianBlur_3x3(filename):
+    img = Image.open(filename)
+    array = np.array(img)
+    kernel=np.array([[0,1,0],[1,4,1],[0,1,0]])
+    print(kernel)
+    modifiedImage=np.zeros([array.shape[0],array.shape[1],3], dtype=np.uint8)
+    for i in range(1, modifiedImage.shape[0]-1):
+        for j in range(1,modifiedImage.shape[1]-1):
+            for c in range(0,3):
+                sum=0
+                for k in range(0,kernel.shape[0]):
+                    for l in range(0,kernel.shape[1]):
+                        sum=sum+kernel[k,l]*array[i-1+k,j-1+l,c]
+                modifiedImage[i,j,c]=sum/8.0
+    img = Image.fromarray(modifiedImage)
+    img.save('GaussianBlurred_3x3'+filename)
+    return
+
+# 3x3 edge detection
+def edgeDetection_3x3(filename,kernelNumber):
+    kernelList=[]
+    kernelList.append(np.array([[1,0,-1],[0,0,0],[-1,0,1]]))
+    kernelList.append(np.array([[0,1,0],[1,-4,1],[0,1,0]]))
+    kernelList.append(np.array([[1,1,1],[1,-8,1],[1,1,1]]))
+    img = Image.open(filename)
+    array = np.array(img)
+    print(kernelList[kernelNumber])
+    greyArray = np.zeros([array.shape[0],array.shape[1]], dtype=np.uint8) #creating new array, not over-writing
+    for i in range(0, array.shape[0]):
+        for j in range(0,array.shape[1]):
+            greyArray[i,j]=(int)(0.2989*array[i,j,0]+0.5870*array[i,j,1]+0.1140*array[i,j,2])
+
+    modifiedArray = np.zeros([array.shape[0],array.shape[1]], dtype=np.uint8) #creating new array, not over-writing
+    for i in range(1, greyArray.shape[0]-1):
+        for j in range(1,greyArray.shape[1]-1):
+            sum=0
+            for k in range(0,kernelList[kernelNumber].shape[0]):
+                for l in range(0,kernelList[kernelNumber].shape[1]):
+                    sum=sum+kernelList[kernelNumber][k,l]*greyArray[i-1+k,j-1+l]
+            modifiedArray[i,j]=sum
+    img = Image.fromarray(modifiedArray)
+    img.save('EdgeDetected_3x3_'+str(kernelNumber)+filename)
+    return
 
 #FUNCTION CALLS
 
@@ -98,3 +165,11 @@ def getColourChannels(filename):
 #toSepia("GoogleIO.jpg")
 #getColourChannels("GoogleIO.jpg")
 #getColourChannels("Workshop.png")
+#boxBlur_5x5("Workshop.png")
+#boxBlur_5x5("GoogleIO.jpg")
+#gaussianBlur_3x3("GoogleIO.jpg")
+#gaussianBlur_3x3("Workshop.png")
+edgeDetection_3x3("Workshop.png",0)
+edgeDetection_3x3("Workshop.png",1)
+edgeDetection_3x3("Workshop.png",2)
+
