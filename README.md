@@ -2,6 +2,7 @@
 # Workshop: Intro to Image Processing
 Codebase for the workshop to introduce image processing
 ### Slides from session
+[Slides Link](https://github.com/dscnitrourkela/workshop-intro-to-image-processing/blob/master/Image%20Processing%20by%20Abel%20-%20Developer%20Student%20Clubs.pdf)
 
 ### YouTube recording of the session
 https://youtu.be/wQwL-MUaRdg
